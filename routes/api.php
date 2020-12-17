@@ -17,4 +17,3 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/redirect', [LoginController::class,'redirect']);
 Route::get('/callback', [LoginController::class,'callback']);
-Route::get('/callback2', [LoginController::class,'callback2']);

@@ -2,42 +2,40 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\LineUrlEnum;
 use App\Http\Controllers\Controller;
+use App\Traits\LineServiceTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
+    use LineServiceTrait;
+
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function redirect()
     {
-        $url = 'https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=1655378791&redirect_uri=http://loginline.test/api/callback&state=12345abcde&scope=profile%20openid%20email';
-        return redirect($url);
+        $params = [
+            'response_type' => 'code',
+            'client_id' => $this->clientId,
+            'state' => '12345abcde',
+            'scope' => 'profile%20openid%20email',
+            'redirect_uri' => $this->callbackUrl,
+        ];
+        return redirect(LineUrlEnum::LINE_AUTHORIZE_URL.$this->matchUrlWithparams($params));
     }
 
+    /**
+     * @param  Request  $request
+     * @return array|mixed
+     */
     public function callback(Request $request)
     {
-        $url = 'https://api.line.me/oauth2/v2.1/token';
-        $code = $request->code;
-        $data = [
-            'grant_type' => 'authorization_code',
-            'code' => $code,
-            'redirect_uri' => 'http://loginline.test/api/callback',
-            'client_id' => '1655378791',
-            'client_secret' => '626df65a903548aa0a06b6b54a8ccda8',
-        ];
-        $response = Http::asForm()->post($url, $data)->json();
-        $profile = $this->profile($response);
-        dd($profile);
-        return $profile;
+        $datas = $this->setOption($request->code);
+        $response = Http::asForm()->post(LineUrlEnum::LINE_TOKEN_URL, $datas)->json();
+        return $this->profile($response);
     }
 
-    public function profile($token)
-    {
-        $urlProfile = 'https://api.line.me/v2/profile';
-        $arrHeader = [
-            'Authorization' => 'Bearer '.$token['access_token'],
-        ];
-        return Http::withHeaders($arrHeader)->get($urlProfile)->json();
-    }
 }
