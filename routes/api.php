@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\LoginGoogleController;
+use App\Http\Controllers\UploadImgController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +19,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/redirect', [LoginController::class,'redirect']);
 Route::get('/callback', [LoginController::class,'callback']);
+
+Route::get('/redirecting', [LoginGoogleController::class,'redirecting']);
+Route::get('/callbackgoogle', [LoginGoogleController::class,'callback']);
+
+Route::post('/upload',[UploadImgController::class,'uploadImage']);

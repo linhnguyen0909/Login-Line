@@ -34,5 +34,10 @@ return [
         'client_secret' => env('LINE_CLIENT_SECRET'),
         'redirect' => env('LINE_REDIRECT_URL')
     ],
+    'google' => [
+        'client_id' => '684086067003-6hmtarafpn0jjiadjvfejb2b66kmuopj.apps.googleusercontent.com',
+        'client_secret' => 'ep15MFmM72nShHMU7oKZHUR4',
+        'redirect' => 'http://localhost/google/callback',
+    ],
 
 ];
